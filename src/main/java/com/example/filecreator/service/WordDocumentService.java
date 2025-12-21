@@ -1,5 +1,6 @@
 package com.example.filecreator.service;
 
+import com.example.filecreator.model.AggregatedExcelRecord;
 import com.example.filecreator.model.ExcelRecord;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -46,6 +47,30 @@ public class WordDocumentService {
         return zipOutputStream.toByteArray();
     }
 
+    public byte[] generateAggregatedWordDocuments(List<AggregatedExcelRecord> aggregatedRecords) throws IOException {
+        // Create a ZIP file containing all generated Word documents for aggregated records
+        ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream(zipOutputStream)) {
+            
+            for (int i = 0; i < aggregatedRecords.size(); i++) {
+                AggregatedExcelRecord record = aggregatedRecords.get(i);
+                byte[] docBytes = generateSingleAggregatedDocument(record);
+                
+                // Add document to ZIP
+                String filename = String.format("Aggregated_%d_%s.docx", 
+                    (i + 1), 
+                    sanitizeFilename(record.getImporterName()));
+                    
+                ZipEntry entry = new ZipEntry(filename);
+                zip.putNextEntry(entry);
+                zip.write(docBytes);
+                zip.closeEntry();
+            }
+        }
+        
+        return zipOutputStream.toByteArray();
+    }
+
     private byte[] generateSingleDocument(ExcelRecord record) throws IOException {
         // Read template document
         File templateFile = new File(TEMPLATE_FILE);
@@ -64,6 +89,35 @@ public class WordDocumentService {
                 for (XWPFTableRow row : table.getRows()) {
                     for (XWPFTableCell cell : row.getTableCells()) {
                         replacePlaceholdersInParagraphs(cell.getParagraphs(), record);
+                    }
+                }
+            }
+            
+            // Write to byte array
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            document.write(outputStream);
+            return outputStream.toByteArray();
+        }
+    }
+
+    private byte[] generateSingleAggregatedDocument(AggregatedExcelRecord record) throws IOException {
+        // Read template document
+        File templateFile = new File(TEMPLATE_FILE);
+        if (!templateFile.exists()) {
+            throw new FileNotFoundException("Template file not found: " + TEMPLATE_FILE);
+        }
+
+        try (FileInputStream fis = new FileInputStream(templateFile);
+             XWPFDocument document = new XWPFDocument(fis)) {
+            
+            // Replace placeholders in paragraphs with aggregated data
+            replacePlaceholdersInParagraphsAggregated(document.getParagraphs(), record);
+            
+            // Replace placeholders in tables with aggregated data
+            for (XWPFTable table : document.getTables()) {
+                for (XWPFTableRow row : table.getRows()) {
+                    for (XWPFTableCell cell : row.getTableCells()) {
+                        replacePlaceholdersInParagraphsAggregated(cell.getParagraphs(), record);
                     }
                 }
             }
@@ -100,6 +154,31 @@ public class WordDocumentService {
         }
     }
 
+    private void replacePlaceholdersInParagraphsAggregated(List<XWPFParagraph> paragraphs, AggregatedExcelRecord record) {
+        for (XWPFParagraph paragraph : paragraphs) {
+            // Get the full text of the paragraph first
+            String fullText = paragraph.getText();
+            if (fullText == null || !fullText.contains("{{")) {
+                continue;
+            }
+
+            // Replace placeholders in the full text with aggregated data
+            String replacedText = replacePlaceholdersAggregated(fullText, record);
+            
+            // If text was changed, we need to rebuild the paragraph
+            if (!fullText.equals(replacedText)) {
+                // Clear all existing runs
+                for (int i = paragraph.getRuns().size() - 1; i >= 0; i--) {
+                    paragraph.removeRun(i);
+                }
+                
+                // Add new run with replaced text
+                XWPFRun newRun = paragraph.createRun();
+                newRun.setText(replacedText);
+            }
+        }
+    }
+
     private String replacePlaceholders(String text, ExcelRecord record) {
         Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
         StringBuffer result = new StringBuffer();
@@ -109,6 +188,25 @@ public class WordDocumentService {
             System.out.println("Found placeholder: '" + placeholder + "'");
             String replacement = getFieldValue(placeholder, record);
             System.out.println("Replacement value: '" + replacement + "'");
+            
+            // Escape special regex characters in replacement
+            String safeReplacement = replacement.replaceAll("\\$", "\\\\\\$");
+            matcher.appendReplacement(result, safeReplacement);
+        }
+        matcher.appendTail(result);
+        
+        return result.toString();
+    }
+
+    private String replacePlaceholdersAggregated(String text, AggregatedExcelRecord record) {
+        Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
+        StringBuffer result = new StringBuffer();
+        
+        while (matcher.find()) {
+            String placeholder = matcher.group(1).trim();
+            System.out.println("Found placeholder (aggregated): '" + placeholder + "'");
+            String replacement = getAggregatedFieldValue(placeholder, record);
+            System.out.println("Replacement value (aggregated): '" + replacement + "'");
             
             // Escape special regex characters in replacement
             String safeReplacement = replacement.replaceAll("\\$", "\\\\\\$");
@@ -174,6 +272,65 @@ public class WordDocumentService {
             default:
                 // Log unmatched placeholders for debugging
                 System.out.println("Unmatched placeholder: '" + placeholder + "' (normalized: '" + normalizedPlaceholder + "')");
+                return "{{" + placeholder + "}}"; // Keep original if not found
+        }
+    }
+
+    private String getAggregatedFieldValue(String placeholder, AggregatedExcelRecord record) {
+        // Map placeholder names to aggregated field values
+        String normalizedPlaceholder = placeholder.toLowerCase().trim();
+        
+        switch (normalizedPlaceholder) {
+            // Primary placeholders from your template mapped to aggregated data
+            case "importer name":
+                return record.getImporterName() != null ? record.getImporterName() : "";
+            case "address":
+                return record.getAddress() != null ? record.getAddress() : "";
+            case "description":
+                return record.getAggregatedDescriptions() != null ? record.getAggregatedDescriptions() : "";
+            case "eight digit hs code":
+                return record.getAggregatedHsCodes() != null ? record.getAggregatedHsCodes() : "";
+            case "bcd rate":
+                return record.getAggregatedBcdRates() != null ? record.getAggregatedBcdRates() : "";
+            case "igst rate":
+                return record.getAggregatedIgstRates() != null ? record.getAggregatedIgstRates() : "";
+            case "differential duty":
+                return record.getTotalDifferentialDuty() != null ? record.getTotalDifferentialDuty().toString() : "";
+                
+            // Additional field mappings for variations
+            case "sr. no.":
+            case "sr no":
+            case "srno":
+                return record.getAggregatedSrNos() != null ? record.getAggregatedSrNos() : "";
+            case "be number":
+            case "benumber":
+                return record.getAggregatedBeNumbers() != null ? record.getAggregatedBeNumbers() : "";
+            case "be date":
+            case "bedate":
+                return record.getAggregatedBeDates() != null ? record.getAggregatedBeDates() : "";
+            case "full item description":
+            case "fullitemdescription":
+            case "item description":
+                return record.getAggregatedDescriptions() != null ? record.getAggregatedDescriptions() : "";
+            case "assessable value amount":
+            case "assessablevalueamount":
+            case "assessable value":
+                return record.getTotalAssessableValue() != null ? record.getTotalAssessableValue().toString() : "";
+            case "total duty paid amount":
+            case "totaldutypaidamount":
+            case "duty paid":
+                return record.getTotalDutyPaid() != null ? record.getTotalDutyPaid().toString() : "";
+            case "effective rate of duty":
+            case "effectiverateofduty":
+            case "effective rate":
+                return record.getAggregatedEffectiveRates() != null ? record.getAggregatedEffectiveRates() : "";
+            case "duty payable":
+            case "dutypayable":
+                return record.getTotalDutyPayable() != null ? record.getTotalDutyPayable().toString() : "";
+                
+            default:
+                // Log unmatched placeholders for debugging
+                System.out.println("Unmatched aggregated placeholder: '" + placeholder + "' (normalized: '" + normalizedPlaceholder + "')");
                 return "{{" + placeholder + "}}"; // Keep original if not found
         }
     }

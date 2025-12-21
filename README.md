@@ -1,20 +1,79 @@
 # filecreator
 
-Spring Boot demo app that parses an uploaded Excel (.xlsx/.xls) or CSV file and returns a list of records mapped to a Java POJO. Also generates Word documents from a template by replacing placeholders with actual data.
+Spring Boot application with React frontend that parses uploaded Excel (.xlsx/.xls) or CSV files and generates Word documents from templates by replacing placeholders with actual data.
+
+## Project Structure
+
+```
+filecreator/
+├── frontend/                   # React frontend application
+│   ├── src/
+│   │   ├── components/         # React components
+│   │   ├── styles/             # CSS styling
+│   │   └── App.js              # Main app component
+│   ├── public/                 # Static assets
+│   ├── package.json           # Frontend dependencies
+│   └── README.md              # Frontend documentation
+├── src/main/java/              # Spring Boot backend
+│   └── com/example/filecreator/
+│       ├── controller/         # REST controllers
+│       ├── model/              # Data models
+│       └── service/            # Business logic
+├── Rough_csv.csv              # Sample data file
+├── Rough.docx                 # Word template (user-provided)
+├── pom.xml                    # Backend dependencies
+└── README.md                  # This file
+```
 
 ## Features
 
-1. **Parse Excel/CSV files** - Converts Excel/CSV data into Java objects
-2. **Generate Word Documents** - Creates individual Word documents for each record using a template
+1. **Modern Web Interface** - React frontend with drag-and-drop file upload
+2. **Parse Excel/CSV files** - Converts Excel/CSV data into Java objects
+3. **Generate Word Documents** - Creates documents using templates with placeholder replacement
+4. **Individual Processing** - One document per Excel/CSV row
+5. **Aggregated Processing** - Groups by importer name with combined data
 
-## Quick start (Windows PowerShell):
+## Quick Start
 
-1. Build and run
+### Prerequisites
+- Java 11+ and Maven
+- Node.js 16+ and npm
+- A `Rough.docx` template file in the project root
+
+### 1. Start the Backend (Spring Boot)
 
 ```powershell
+# Build and run Spring Boot application
 mvn clean package
 mvn spring-boot:run
 ```
+
+The backend will start on http://localhost:8080
+
+### 2. Start the Frontend (React)
+
+```powershell
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+```
+
+The frontend will open at http://localhost:3000
+
+### 3. Use the Application
+
+1. **Open http://localhost:3000** in your browser
+2. **Upload your Excel/CSV file** using the drag-and-drop interface
+3. **Choose processing type**:
+   - Individual: One document per row
+   - Aggregated: Group by importer name
+4. **Click "Generate Documents"** to process
+5. **Download the ZIP file** containing generated Word documents
 
 ## API Endpoints
 
@@ -26,13 +85,29 @@ Parse Excel/CSV and return JSON data:
 curl -F "file=@.\Rough_csv.csv" http://localhost:8080/api/upload
 ```
 
-### 2. Generate Word Documents
-Parse Excel/CSV and generate Word documents from template:
+### 2. Generate Individual Word Documents
+Parse Excel/CSV and generate one Word document per record:
 
 ```powershell
-# Upload file and download ZIP containing generated Word documents
-curl -F "file=@.\Rough_csv.csv" http://localhost:8080/api/generate-docs -o generated_documents.zip
+# Upload file and download ZIP containing individual Word documents (one per row)
+curl -F "file=@.\Rough_csv.csv" http://localhost:8080/api/generate-docs -o individual_documents.zip
 ```
+
+### 3. Generate Aggregated Word Documents (NEW!)
+Parse Excel/CSV and generate aggregated Word documents grouped by importer name:
+
+```powershell
+# Upload file and download ZIP containing aggregated Word documents (one per unique importer)
+curl -F "file=@.\Rough_csv.csv" http://localhost:8080/api/generate-aggregated-docs -o aggregated_documents.zip
+```
+
+**Aggregation Rules:**
+- Groups all records by importer name
+- Uses first address found for each importer
+- Sums up differential duty amounts for same importer
+- Combines all unique HS codes with comma separation
+- Combines other fields (BE numbers, dates, descriptions, rates) with comma separation
+- Totals numerical values (assessable value, duty paid, duty payable)
 
 ## Template Setup
 
