@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:3000")
 public class FileUploadController {
 
     @Autowired
@@ -28,6 +29,11 @@ public class FileUploadController {
 
     @Autowired
     private DataAggregationService dataAggregationService;
+
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("Server is running successfully!");
+    }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file) {
