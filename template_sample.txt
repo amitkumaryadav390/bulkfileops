@@ -1,0 +1,32 @@
+Since I cannot create a .docx file directly, here's what your Rough.docx template should contain:
+
+SAMPLE TEMPLATE CONTENT FOR Rough.docx:
+=========================================
+
+IMPORT DOCUMENT
+
+Importer Details:
+- Name: {{Importer Name}}
+- Address: {{Address}}
+
+Bill of Entry Information:
+- Sr. No.: {{Sr. No.}}
+- BE Number: {{BE Number}} 
+- BE Date: {{BE Date}}
+
+Item Details:
+- HS Code: {{Eight Digit HS Code}}
+- Description: {{Full Item Description}}
+
+Financial Details:
+- Assessable Value: {{Assessable Value Amount}}
+- BCD Rate: {{BCD Rate}}
+- IGST Rate: {{IGST Rate}}
+- Total Duty Paid: {{Total Duty Paid Amount}}
+- Effective Rate of Duty: {{Effective Rate of Duty}}
+- Duty Payable: {{Duty Payable}}
+- Differential Duty: {{Differential Duty}}
+
+=========================================
+
+Create a Word document (Rough.docx) with the above content structure, using the placeholder format {{placeholder_name}} where you want the actual data values to be inserted.

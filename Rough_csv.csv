@@ -1,0 +1,4 @@
+Sr. No.,BE Number,BE Date,Importer Name,ADDRESS,Eight Digit HS Code,Full Item Description,Assessable Value Amount,BCD Rate,IGST Rate,Total Duty Paid Amount,Effective Rate of duty (BCD@35% + SWS@10% + IGST@28%),Duty Payable,Differential Duty
+1,8568569,03-06-2021 00:00,ABC,S ABD NT,85444999,Machines,8658,0%,0,300,77.28%,6690.9024,6390.9024
+2,8568569,03-06-2021 00:00,ABC,S ABD NT,83249099,Chemicals,69475,5%,5,8567,77.28%,53690.28,45123.28
+3,9002685,03-08-2021 00:00,UTT,S TURO FMN,69852480,Banana,12856,7.50%,18,5703,77.28%,9935.1168,4232.1168
