@@ -67,13 +67,27 @@ public class DataAggregationService {
         aggregated.setAggregatedBeNumbers(beNumbers);
 
         // Aggregate BE dates
-        String beDates = records.stream()
-                .map(ExcelRecord::getBeDate)
-                .filter(Objects::nonNull)
-                .filter(date -> !date.trim().isEmpty())
-                .distinct()
-                .collect(Collectors.joining(", "));
-        aggregated.setAggregatedBeDates(beDates);
+                String beDates = records.stream()
+                                .map(ExcelRecord::getBeDate)
+                                .filter(Objects::nonNull)
+                                .filter(date -> !date.trim().isEmpty())
+                                .map(date -> {
+                                        // If date looks like a number, try to convert from Excel numeric date
+                                        if (date.matches("\\d+")) {
+                                                try {
+                                                        int excelDate = Integer.parseInt(date);
+                                                        java.util.Date parsed = org.apache.poi.ss.usermodel.DateUtil.getJavaDate(excelDate);
+                                                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+                                                        return sdf.format(parsed);
+                                                } catch (Exception e) {
+                                                        return date;
+                                                }
+                                        }
+                                        return date;
+                                })
+                                .distinct()
+                                .collect(Collectors.joining(", "));
+                aggregated.setAggregatedBeDates(beDates);
 
         // Aggregate descriptions
         String descriptions = records.stream()
