@@ -17,6 +17,7 @@ public class AggregatedExcelRecord {
     private BigDecimal totalDutyPayable; // Sum of duty payable
     private String aggregatedEffectiveRates; // Comma-separated effective rates
     private String aggregatedSrNos; // Comma-separated Sr. Nos
+    private String aggregatedChaDetails; // Comma-separated CHA details
 
     // Getters and Setters
     public String getImporterName() {
@@ -131,6 +132,14 @@ public class AggregatedExcelRecord {
         this.aggregatedSrNos = aggregatedSrNos;
     }
 
+    public String getAggregatedChaDetails() {
+        return aggregatedChaDetails;
+    }
+
+    public void setAggregatedChaDetails(String aggregatedChaDetails) {
+        this.aggregatedChaDetails = aggregatedChaDetails;
+    }
+
     @Override
     public String toString() {
         return "AggregatedExcelRecord{" +
@@ -139,6 +148,7 @@ public class AggregatedExcelRecord {
                 ", aggregatedHsCodes='" + aggregatedHsCodes + '\'' +
                 ", totalDifferentialDuty=" + totalDifferentialDuty +
                 ", totalAssessableValue=" + totalAssessableValue +
+                ", aggregatedChaDetails='" + aggregatedChaDetails + '\'' +
                 '}';
     }
 }

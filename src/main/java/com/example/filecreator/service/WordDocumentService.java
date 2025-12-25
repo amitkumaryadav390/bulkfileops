@@ -296,6 +296,9 @@ public class WordDocumentService {
                 return record.getAggregatedIgstRates() != null ? record.getAggregatedIgstRates() : "";
             case "differential duty":
                 return record.getTotalDifferentialDuty() != null ? record.getTotalDifferentialDuty().toString() : "";
+            case "cha details":
+            case "cha":
+                return record.getAggregatedChaDetails() != null ? record.getAggregatedChaDetails() : "";
                 
             // Additional field mappings for variations
             case "sr. no.":

@@ -1,4 +1,4 @@
-Sr. No.,BE Number,BE Date,Importer Name,ADDRESS,Eight Digit HS Code,Full Item Description,Assessable Value Amount,BCD Rate,IGST Rate,Total Duty Paid Amount,Effective Rate of duty (BCD@35% + SWS@10% + IGST@28%),Duty Payable,Differential Duty
-1,8568569,03-06-2021 00:00,ABC,S ABD NT,85444999,Machines,8658,0%,0,300,77.28%,6690.9024,6390.9024
-2,8568569,03-06-2021 00:00,ABC,S ABD NT,83249099,Chemicals,69475,5%,5,8567,77.28%,53690.28,45123.28
-3,9002685,03-08-2021 00:00,UTT,S TURO FMN,69852480,Banana,12856,7.50%,18,5703,77.28%,9935.1168,4232.1168
+﻿Sr. No.,BE Number,BE Date,IEC Code,Importer Name,ADDRESS,CHA details,Eight Digit HS Code,Invoice Number,Item Number,Full Item Description,QUANTITY,Unit Price,Assessable Value Amount,BCD Amount,BCD Rate,BCD Notification,BCD Notification Serial Number,IGST Amount,IGST Rate,IGST Notification,IGST Notification Serial Number,Total Duty Amount,Effective Rate of duty (BCD@35% + SWS@10% + IGST@28%),Duty Payable,Differential Duty
+1,8568569,03-06-2021 00:00,100000053,ABC,S ABD NT,Machines,85444999,55,1,Apple,77.28%,15,849.06,63.7,7.5,050/2017,185,165.4,18,001/2017,III40,235.5,77.28%,656.15,420.65
+2,8568569,03-06-2021 00:00,100000053,ABC,S ABD NT,Chemicals,83249099,480,2,Cabbage,77.28%,20,25680.45,1284,5,051/96,1,0,0,001/2017,III395,1412.4,77.28%,19845.85,18433.45
+3,9002685,03-08-2021 00:00,100000053,UTT,S TURO FMN,Banana,69852480,96A,1,Banana,77.28%,18,7594.13,379.7,5,051/96,1,0,0,001/2017,III423,417.7,77.28%,5868.74,5451.04

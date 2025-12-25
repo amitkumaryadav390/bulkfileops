@@ -17,6 +17,7 @@ public class ExcelRecord {
     private String effectiveRateOfDuty;
     private BigDecimal dutyPayable;
     private BigDecimal differentialDuty;
+    private String chaDetails;
 
     public Integer getSrNo() {
         return srNo;
@@ -130,6 +131,14 @@ public class ExcelRecord {
         this.differentialDuty = differentialDuty;
     }
 
+    public String getChaDetails() {
+        return chaDetails;
+    }
+
+    public void setChaDetails(String chaDetails) {
+        this.chaDetails = chaDetails;
+    }
+
     @Override
     public String toString() {
         return "ExcelRecord{" +
@@ -147,6 +156,7 @@ public class ExcelRecord {
                 ", effectiveRateOfDuty='" + effectiveRateOfDuty + '\'' +
                 ", dutyPayable=" + dutyPayable +
                 ", differentialDuty=" + differentialDuty +
+                ", chaDetails='" + chaDetails + '\'' +
                 '}';
     }
 }

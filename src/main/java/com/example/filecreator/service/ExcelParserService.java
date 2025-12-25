@@ -82,7 +82,11 @@ public class ExcelParserService {
                 Map<String, String> map = new LinkedHashMap<>();
                 for (int i = 0; i < headers.size(); i++) {
                     Cell c = row.getCell(i);
-                    map.put(headers.get(i), getCellString(c));
+                        String key = headers.get(i);
+                        String value = getCellString(c);
+                        if (key != null) key = key.trim();
+                        if (value != null) value = value.trim();
+                        map.put(key, value);
                 }
                 ExcelRecord r = mapRecord(map);
                 out.add(r);
@@ -130,6 +134,8 @@ public class ExcelParserService {
         r.setEffectiveRateOfDuty(getFirst(row, "Effective Rate of duty (BCD@35% + SWS@10% + IGST@28%)", "Effective Rate of duty (BCD@35% + SWS@10% + IGST@28%)"));
         r.setDutyPayable(parseBigDecimal(getFirst(row, "Duty Payable", "Duty Payable")));
         r.setDifferentialDuty(parseBigDecimal(getFirst(row, "Differential Duty", "Differential Duty")));
+        r.setChaDetails(getFirst(row, "CHA details", "CHA Details", "CHA", "CHA details ", " CHA details"));
+        System.out.println("Parsed CHA details: " + r.getChaDetails());
         return r;
     }
 

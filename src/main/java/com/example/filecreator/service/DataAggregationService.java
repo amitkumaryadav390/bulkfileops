@@ -49,6 +49,14 @@ public class DataAggregationService {
                 .collect(Collectors.joining(", "));
         aggregated.setAggregatedHsCodes(hsCodes);
 
+        // Aggregate CHA details (comma-separated, distinct)
+                String chaDetails = records.stream()
+                        .map(ExcelRecord::getChaDetails)
+                        .filter(Objects::nonNull)
+                        .filter(detail -> !detail.trim().isEmpty())
+                        .collect(Collectors.joining(", "));
+                aggregated.setAggregatedChaDetails(chaDetails);
+
         // Aggregate BE numbers
         String beNumbers = records.stream()
                 .map(ExcelRecord::getBeNumber)
