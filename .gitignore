@@ -24,6 +24,7 @@ hs_err_pid*
 replay_pid*
 
 # Maven
+# Ignore Maven build output
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -127,3 +128,9 @@ logs/
 *.log
 target/
 targets/
+
+# Node modules
+/frontend/node_modules/
+
+# Frontend build
+/frontend/dist/
